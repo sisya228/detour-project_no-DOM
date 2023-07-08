@@ -3,7 +3,7 @@ class Detour {
     this.L = 10;
     this.CLASS_NAME = "new-elm"
     this.ID = 0;
-    this.ITERATION = 30;
+    this.ITERATION = 70;
     this.num = 0;
     this.start;
     this.end;
@@ -26,7 +26,6 @@ class Detour {
   
   getCoordinates(startCoordinates, endElm) {
     this.setProperety(startCoordinates, endElm);
-     console.log(this.psevdoContainerElm.style.width);
     this.start.prevElements = [];
     var obstArr = this.obstArr;
     this.obstaclesArr = obstArr;
@@ -52,7 +51,6 @@ class Detour {
       this.perimeterPrev1 = lastCells;
       this.perimeterGrov = [];
       if (this.endCell || this.num > this.limitIteration) {
-        //console.log('break');
         break;
       }
    }
@@ -252,7 +250,7 @@ setPosition(elm, x, y) {
           this.endCell = elm;
           return;
         }
-      //this.wiewElement(elm, "new-elm");
+      // this.wiewElement(elm, "new-elm");
       }
   }
 
@@ -279,7 +277,7 @@ addElement() {
 }
 
 wiewElement(elm, className) {
-  var newElm = this.start.parentElement.addElement();
+  var newElm = this.containerElm.addElement();
   newElm.className = className;
   newElm.style.width = elm.style.width;
   newElm.style.height = elm.style.height;
@@ -296,7 +294,8 @@ wiewElement(elm, className) {
 window.onload = () => {
   var stElm = document.getElementById("block");
   positionElement.getRelativeParentElement(stElm);
-  var startCoordinates = {...stElm.style};
+  var startCoord = {...stElm.style};
+  var containerElm = stElm.parentElement;
   // console.log(startCoordinates == stElm.style);
   var targElm = document.getElementById('target');
   var myClass = document.getElementById('go_for_class');
@@ -304,18 +303,19 @@ window.onload = () => {
     //console.log(targElm);
     var detour = new Detour("obstacles", {width: 300, height: 300});
     detour.L = 10;
+    detour.limitIteration = 500000;
+    detour.containerElm = containerElm;
     //detour.ITERATION = 0;
-    var coordinates = detour.getCoordinates(startCoordinates, targElm);
+    var coordinates = detour.getCoordinates(startCoord, targElm);
     //console.log(coordinates[2].style);
     //console.log(coordinates[0]);
     coordinates = coordinates? coordinates:[];
-    var containerElm = stElm.parentElement;
     coordinates.forEach((elm, i) => {
       if(i != 0) {
         var newElm = containerElm.addElement();
         newElm.style.position = 'absolute';
-        newElm.style.width = 10+'px';
-        newElm.style.height = 10+'px';
+        newElm.style.width = detour.L+'px';
+        newElm.style.height = detour.L+'px';
         console.log(elm);
         newElm.style.left = elm[0];
         newElm.style.top = elm[1];
