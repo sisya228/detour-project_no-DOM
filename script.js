@@ -75,11 +75,11 @@ class Detour {
     }
 }
 
-setProperety(startElm, endElm) {
-    this.blockElm = startElm;
+ setProperety(startElm, endElm) {
+  console.log(startElm);
+    this.blockElm = {style: startElm};
     this.end = endElm;
     positionElement.getRelativeParentElement(this.end);
-    positionElement.getRelativeParentElement(this.blockElm);
     this.psevdoContainerElm = {
       style: this.positionContainer,
     };
@@ -298,7 +298,7 @@ window.onload = () => {
   var stElm = document.getElementById("block");
   positionElement.getRelativeParentElement(stElm);
   var startCoordinates = {...stElm.style};
-  console.log(startCoordinates == stElm.style);
+  // console.log(startCoordinates == stElm.style);
   var targElm = document.getElementById('target');
   var myClass = document.getElementById('go_for_class');
   myClass.onclick = () => {
@@ -306,7 +306,7 @@ window.onload = () => {
     var detour = new Detour("obstacles", {width: 300, height: 300});
     detour.L = 10;
     //detour.ITERATION = 0;
-    var coordinates = detour.getCoordinates(stElm, targElm);
+    var coordinates = detour.getCoordinates(startCoordinates, targElm);
     //console.log(coordinates[2].style);
     //console.log(coordinates[0]);
     coordinates = coordinates? coordinates:[];
