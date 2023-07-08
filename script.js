@@ -24,8 +24,8 @@ class Detour {
     this.psevdoContainerElm = {};
   }
   
-  getCoordinates(startElm, endElm) {
-    this.setProperety(startElm, endElm);
+  getCoordinates(startCoordinates, endElm) {
+    this.setProperety(startCoordinates, endElm);
      console.log(this.psevdoContainerElm.style.width);
     this.blockElm.prevElements = [];
     var obstArr = this.obstArr;
