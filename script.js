@@ -297,7 +297,7 @@ window.onload = () => {
   var containerElm = stElm.parentElement;
   // console.log(startCoordinates == stElm.style);
   var targElm = document.getElementById('target');
-  var myClass = document.getElementById('go_for_class');
+  var myClass = document.getElementById('detour');
   myClass.onclick = () => {
     //console.log(targElm);
     var detour = new Detour("obstacles", {width: 300, height: 300});
@@ -331,19 +331,5 @@ window.onload = () => {
       stElm
       );*/
     //moveObj.start(100);
-  }
-  document.getElementById('go').onclick = () => {
-  var arr = [];
-  for (var i = 0; i < 10000000; i++) {
-    arr[i] = {
-     style: {
-        width: 0,
-        height: 0,
-        left: 0,
-        top: 0
-      }
-   };
-}
-
   }
 }
