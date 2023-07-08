@@ -1,7 +1,7 @@
 class Detour {
   constructor(obstaclesClassName, containerCoordinates) {
     this.L = 10;
-    this.CLASS_NAME = "new-elm"
+    // this.CLASS_NAME = "new-elm"
     this.ID = 0;
     this.ITERATION = 30;
     this.num = 0;
