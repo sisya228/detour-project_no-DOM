@@ -1,4 +1,5 @@
 class Detour {
+  //reserv file
   constructor(startElm, endElm, obstaclesClassName) {
     this.L = 10;
     this.CLASS_NAME = "new-elm"
