@@ -1,11 +1,11 @@
 class Detour {
   constructor(obstaclesClassName, containerCoordinates) {
     this.L = 10;
-    // this.CLASS_NAME = "new-elm"
+    this.CLASS_NAME = "new-elm"
     this.ID = 0;
     this.ITERATION = 30;
     this.num = 0;
-    this.blockElm;
+    this.start;
     this.end;
     this.perimeterPrev1 = [];
     this.perimeterPrev2 = [];
@@ -27,11 +27,11 @@ class Detour {
   getCoordinates(startCoordinates, endElm) {
     this.setProperety(startCoordinates, endElm);
      console.log(this.psevdoContainerElm.style.width);
-    this.blockElm.prevElements = [];
+    this.start.prevElements = [];
     var obstArr = this.obstArr;
     this.obstaclesArr = obstArr;
     var lastCells;
-    lastCells = this.add8Cells(this.blockElm);
+    lastCells = this.add8Cells(this.start);
     this.perimeterGrov = [];
     this.perimeterPrev1 = [];
     this.perimeterPrev1 = lastCells;
@@ -40,7 +40,7 @@ class Detour {
       this.deleteElementsArrey(lastCells, (elm) => { return elm.removeStatus });
       if (i == 0) {
         for (var j = 0; j < lastCells.length; j++) {
-          if (inElement(this.blockElm, lastCells[j])) {
+          if (inElement(this.start, lastCells[j])) {
             //lastCells[j].remove();
             lastCells[j].removeStatus = true;
             lastCells.splice(j, 1);
@@ -76,8 +76,7 @@ class Detour {
 }
 
  setProperety(startElm, endElm) {
-  console.log(startElm);
-    this.blockElm = {style: startElm};
+    this.start = {style: startElm};
     this.end = endElm;
     positionElement.getRelativeParentElement(this.end);
     this.psevdoContainerElm = {
@@ -280,7 +279,7 @@ addElement() {
 }
 
 wiewElement(elm, className) {
-  var newElm = this.blockElm.parentElement.addElement();
+  var newElm = this.start.parentElement.addElement();
   newElm.className = className;
   newElm.style.width = elm.style.width;
   newElm.style.height = elm.style.height;
