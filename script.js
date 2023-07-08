@@ -254,7 +254,6 @@ setPosition(elm, x, y) {
       }
   }
 
-
 deleteElementsArrey(arr, condition, test) {
   var i = true;
   for (var i = 0; i < arr.length; i++) {
