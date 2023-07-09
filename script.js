@@ -1,5 +1,5 @@
 class Detour {
-  constructor(obstaclesClassName, containerCoordinates) {
+  constructor(arreyObstaclesCoordinates, containerCoordinates) {
     this.L = 10;
     this.CLASS_NAME = "new-elm"
     this.ID = 0;
@@ -11,11 +11,12 @@ class Detour {
     this.perimeterPrev2 = [];
     this.perimeterGrov = [];
     this.obstaclesArr = [];
-    this.obstaclesClass = obstaclesClassName;
-    this.obstArr = [...document.getElementsByClassName(this.obstaclesClass)];
-    this.obstArr.forEach((elm) =>{
-      positionElement.getRelativeParentElement(elm);
-    } );
+    this.obstArrCoord = arreyObstaclesCoordinates;
+    this.obstArr = [];
+    this.obstArrCoord.forEach((elm) =>{
+      this.obstArr.push({style: elm});
+    });
+    console.log(this.obstArrCoord);
     this.endCell = false;
     this.num = 0;
     this.limitIteration = 500000;
@@ -311,11 +312,10 @@ window.onload = () => {
     positionElement.getRelativeParentElement(elm);
     arrObsCoord.push({...elm.style});
   } );
-  console.log(arrObsCoord[2]);
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
     //console.log(targElm);
-    var detour = new Detour("obstacles", {width: 300, height: 300});
+    var detour = new Detour(arrObsCoord, {width: 300, height: 300});
     detour.L = 10;
     detour.limitIteration = 500000;
     detour.containerElm = containerElm;
