@@ -4,6 +4,9 @@ class Detour {
     this.CLASS_NAME = "new-elm"
     this.ID = 0;
     this.ITERATION = 70;
+
+    this.console = true;
+
     this.num = 0;
     this.start;
     this.end;
@@ -16,7 +19,6 @@ class Detour {
     this.obstArrCoord.forEach((elm) =>{
       this.obstArr.push({style: elm});
     });
-    console.log(this.obstArrCoord);
     this.endCell = false;
     this.num = 0;
     this.limitIteration = 500000;
@@ -79,6 +81,7 @@ class Detour {
 }
 
  setProperety(startElm, endElm) {
+  console.log(startElm);
     this.start = {style: startElm};
     this.end = {style: endElm};
     this.psevdoContainerElm = {
@@ -86,7 +89,9 @@ class Detour {
     };
     this.psevdoContainerElm.style.left = 0;
     this.psevdoContainerElm.style.top = 0;
-}
+    // this.end.style.width = 0;
+    // this.end.style.height = 0;
+  }
   
 getLastCells(arrCells1) {
   var arrCells2 = [];
@@ -240,6 +245,10 @@ styleNewElm(centerElm, arrNewElm) {
 }
 
 setPosition(elm, x, y) {
+    if (this.console) {
+      console.log(elm);
+    }
+    this.console = false;
     if (this.centerElm) return;
     elm.style.left = x + "px";
     elm.style.top = y + "px";
@@ -300,26 +309,29 @@ wiewElement(elm, className) {
 window.onload = () => {
   var stElm = document.getElementById("block");
   positionElement.getRelativeParentElement(stElm);
-  var startCoord = {...stElm.style};
+  var startCoord = filtrObject(stElm.style);
   var containerElm = stElm.parentElement;
   // console.log(startCoordinates == stElm.style);
   var targElm = document.getElementById('target');
   positionElement.getRelativeParentElement(targElm);
-  var targCoord = {...targElm.style};
+  var targCoord = targElm.style;
+  console.log(startCoord, targCoord);
   var arrObsElm = [...document.getElementsByClassName('obstacles')];
   var arrObsCoord = [];
   arrObsElm.forEach((elm, index) => {
     positionElement.getRelativeParentElement(elm);
-    arrObsCoord.push({...elm.style});
+    arrObsCoord.push(elm.style);
   } );
+  function filtrObject(obj) {
+    let {left, top} = obj;
+    return {left, top}
+  }
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
     //console.log(targElm);
     var detour = new Detour(arrObsCoord, {width: 300, height: 300});
     detour.L = 10;
     detour.limitIteration = 500000;
-    detour.containerElm = containerElm;
-    //detour.ITERATION = 0;
     var coordinates = detour.getCoordinates(startCoord, targCoord);
     //console.log(coordinates[2].style);
     //console.log(coordinates[0]);
