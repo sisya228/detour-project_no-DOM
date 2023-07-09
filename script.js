@@ -24,8 +24,8 @@ class Detour {
     this.psevdoContainerElm = {};
   }
   
-  getCoordinates(startCoordinates, endElm) {
-    this.setProperety(startCoordinates, endElm);
+  getCoordinates(startCoordinates, targetCoordinates) {
+    this.setProperety(startCoordinates, targetCoordinates);
     this.start.prevElements = [];
     var obstArr = this.obstArr;
     this.obstaclesArr = obstArr;
@@ -51,9 +51,11 @@ class Detour {
       this.perimeterPrev1 = lastCells;
       this.perimeterGrov = [];
       if (this.endCell || this.num > this.limitIteration) {
-        const err = new Error("limit iteration")
-        console.log(`${err.name}__${err.message}\n${err.stack}`);
-        break;
+        if (this.num > this.limitIteration) {
+          const err = new Error("limit iteration")
+          console.log(`${err.name}__${err.message}\n${err.stack}`);
+        }
+        break
       }
    }
    var arrClass = document.getElementsByClassName(this.CLASS_NAME);
@@ -77,8 +79,7 @@ class Detour {
 
  setProperety(startElm, endElm) {
     this.start = {style: startElm};
-    this.end = endElm;
-    positionElement.getRelativeParentElement(this.end);
+    this.end = {style: endElm};
     this.psevdoContainerElm = {
       style: this.positionContainer,
     };
@@ -306,10 +307,10 @@ window.onload = () => {
     //console.log(targElm);
     var detour = new Detour("obstacles", {width: 300, height: 300});
     detour.L = 10;
-    detour.limitIteration = 5000;
+    detour.limitIteration = 500000;
     detour.containerElm = containerElm;
     //detour.ITERATION = 0;
-    var coordinates = detour.getCoordinates(startCoord, targElm);
+    var coordinates = detour.getCoordinates(startCoord, targCoord);
     //console.log(coordinates[2].style);
     //console.log(coordinates[0]);
     //coordinates = coordinates? coordinates:[];

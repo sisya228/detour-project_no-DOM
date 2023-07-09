@@ -4,7 +4,7 @@ class Detour {
     this.CLASS_NAME = "new-elm"
     this.ID = 0;
     this.ITERATION = 30;
-    this.num = 0;
+    this.num =  0;
     this.blockElm = startElm;
     this.end = endElm;
     this.perimeterPrev1 = [];
