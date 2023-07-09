@@ -292,6 +292,9 @@ wiewElement(elm, className) {
 
 /*
 
+
+
+
 */
 window.onload = () => {
   var stElm = document.getElementById("block");
@@ -301,7 +304,14 @@ window.onload = () => {
   // console.log(startCoordinates == stElm.style);
   var targElm = document.getElementById('target');
   positionElement.getRelativeParentElement(targElm);
-  var targCoord =   {...targElm.style};
+  var targCoord = {...targElm.style};
+  var arrObsElm = [...document.getElementsByClassName('obstacles')];
+  var arrObsCoord = [];
+  arrObsElm.forEach((elm, index) => {
+    positionElement.getRelativeParentElement(elm);
+    arrObsCoord.push({...elm.style});
+  } );
+  console.log(arrObsCoord[2]);
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
     //console.log(targElm);
@@ -339,5 +349,4 @@ window.onload = () => {
     //moveObj.start(100);
   }
 }
-
 
