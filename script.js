@@ -51,6 +51,8 @@ class Detour {
       this.perimeterPrev1 = lastCells;
       this.perimeterGrov = [];
       if (this.endCell || this.num > this.limitIteration) {
+        const err = new Error("limit iteration")
+        console.log(`${err.name}__${err.message}\n${err.stack}`);
         break;
       }
    }
@@ -297,18 +299,21 @@ window.onload = () => {
   var containerElm = stElm.parentElement;
   // console.log(startCoordinates == stElm.style);
   var targElm = document.getElementById('target');
+  positionElement.getRelativeParentElement(targElm);
+  var targCoord =   {...targElm.style};
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
     //console.log(targElm);
     var detour = new Detour("obstacles", {width: 300, height: 300});
     detour.L = 10;
-    detour.limitIteration = 500000;
+    detour.limitIteration = 5000;
     detour.containerElm = containerElm;
     //detour.ITERATION = 0;
     var coordinates = detour.getCoordinates(startCoord, targElm);
     //console.log(coordinates[2].style);
     //console.log(coordinates[0]);
-    coordinates = coordinates? coordinates:[];
+    //coordinates = coordinates? coordinates:[];
+    coordinates = coordinates || [];
     coordinates.forEach((elm, i) => {
       if(i != 0) {
         var newElm = containerElm.addElement();
@@ -333,3 +338,5 @@ window.onload = () => {
     //moveObj.start(100);
   }
 }
+
+
