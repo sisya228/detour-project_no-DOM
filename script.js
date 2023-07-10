@@ -4,9 +4,6 @@ class Detour {
     this.CLASS_NAME = "new-elm"
     this.ID = 0;
     this.ITERATION = 70;
-
-    this.console = true;
-
     this.num = 0;
     this.start;
     this.end;
@@ -81,9 +78,10 @@ class Detour {
 }
 
  setProperety(startElm, endElm) {
-  console.log(startElm);
     this.start = {style: startElm};
     this.end = {style: endElm};
+    this.end.style.width = this.L+'px';
+    this.end.style.height = this.L+'px';
     this.psevdoContainerElm = {
       style: this.positionContainer,
     };
@@ -245,10 +243,6 @@ styleNewElm(centerElm, arrNewElm) {
 }
 
 setPosition(elm, x, y) {
-    if (this.console) {
-      console.log(elm);
-    }
-    this.console = false;
     if (this.centerElm) return;
     elm.style.left = x + "px";
     elm.style.top = y + "px";
@@ -311,11 +305,9 @@ window.onload = () => {
   positionElement.getRelativeParentElement(stElm);
   var startCoord = filtrObject(stElm.style);
   var containerElm = stElm.parentElement;
-  // console.log(startCoordinates == stElm.style);
   var targElm = document.getElementById('target');
   positionElement.getRelativeParentElement(targElm);
-  var targCoord = targElm.style;
-  console.log(startCoord, targCoord);
+  var targCoord = filtrObject(targElm.style);
   var arrObsElm = [...document.getElementsByClassName('obstacles')];
   var arrObsCoord = [];
   arrObsElm.forEach((elm, index) => {
@@ -328,14 +320,10 @@ window.onload = () => {
   }
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
-    //console.log(targElm);
     var detour = new Detour(arrObsCoord, {width: 300, height: 300});
     detour.L = 10;
     detour.limitIteration = 500000;
     var coordinates = detour.getCoordinates(startCoord, targCoord);
-    //console.log(coordinates[2].style);
-    //console.log(coordinates[0]);
-    //coordinates = coordinates? coordinates:[];
     coordinates = coordinates || [];
     coordinates.forEach((elm, i) => {
       if(i != 0) {
@@ -348,7 +336,6 @@ window.onload = () => {
         newElm.style.top = elm[1];
         newElm.style.background = 'red';
         newElm.style.zIndex = 3;
-        //console.log(newElm.style);
       }
       
     });
