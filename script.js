@@ -252,7 +252,7 @@ setPosition(elm, x, y) {
       elm.removeStatus = true;
     } else {
         this.perimeterGrov.push(elm);
-        var contactCellTarget = contactObjects(elm, this.end);
+        var contactCellTarget = this.contactObjects(elm, this.end);
         if (contactCellTarget) {
           this.endCell = elm;
           return;
@@ -280,6 +280,58 @@ addElement() {
     },
     removeStatus: false
   }
+}
+
+getContactObjects(objA, objB, crossroads) {
+  var widthA = parseInt(objA.style.width);
+  var heightA = parseInt(objA.style.height);
+  var leftA = parseInt(objA.style.left);
+  var topA = parseInt(objA.style.top);
+  
+  var widthB = parseInt(objB.style.width);
+  var heightB = parseInt(objB.style.height);
+  var leftB = parseInt(objB.style.left);
+  var topB = parseInt(objB.style.top);
+  
+  var corners = [
+    [leftB, topB],
+    [leftB + widthB, topB],
+    [leftB, topB + heightB],
+    [leftB + widthB, topB + heightB]
+  ];
+  var cornersA;
+  if (crossroads) {
+      cornersA = [
+    [leftA, topA],
+    [leftA + widthA, topA],
+    [leftA, topA + heightA],
+    [leftA + widthA, topA + heightA]
+  ];
+
+  }
+  
+  var c, e;
+  for (var i = 0; corners[i]; i++) {
+    e = corners[i];
+    c = !crossroads? diapason(e[0], leftA, leftA + widthA) : diapason(cornersA[i][0], leftB, leftB + widthB);
+    if (!c) continue;
+    c = diapason(e[1], topA, topA + heightA);
+    if (c) {
+      return true;
+    }
+  }
+  return false;
+
+
+  function diapason(x, a, b) {
+    return (x >= a && x <= b);
+  }
+}
+
+contactObjects(objA, objB){
+  return this.getContactObjects(objA, objB) || this.getContactObjects(objB, objA)
+    ||
+    this.getContactObjects(objA, objB, true) || this.getContactObjects(objB, objA, true);
 }
 
 wiewElement(elm, className) {
