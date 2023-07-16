@@ -14,18 +14,18 @@ class Detour {
     this.obstArrCoord = arreyObstaclesCoordinates;
     this.obstArr = [];
     this.obstArrCoord.forEach((elm) =>{
-      this.obstArr.push({style: elm});
+      this.obstArr.push({style: this.parseIntProperatiObj(elm)});
     });
     this.endCell = false;
     this.num = 0;
     this.limitIteration = 500000;
-    this.positionContainer = containerCoordinates;
+    this.positionContainer = this.parseIntProperatiObj(containerCoordinates);
     this.containerElm;
     this.psevdoContainerElm = {};
   }
   
   getCoordinates(startCoordinates, targetCoordinates) {
-    this.setProperety(startCoordinates, targetCoordinates);
+    this.setProperaty(startCoordinates, targetCoordinates);
     this.start.prevElements = [];
     var obstArr = this.obstArr;
     this.obstaclesArr = obstArr;
@@ -39,7 +39,7 @@ class Detour {
       this.deleteElementsArrey(lastCells, (elm) => { return elm.removeStatus });
       if (i == 0) {
         for (var j = 0; j < lastCells.length; j++) {
-          if (inElement(this.start, lastCells[j])) {
+          if (this.inElement(this.start, lastCells[j])) {
             //lastCells[j].remove();
             lastCells[j].removeStatus = true;
             lastCells.splice(j, 1);
@@ -62,7 +62,6 @@ class Detour {
    console.log('summ cell'+arrClass.length);
    console.log(`num iteration ${this.num}`);
    if (this.endCell){
-     console.log(this.endCell);
      this.endCell.prevElements.push(this.endCell);
      let res = [];
      for (var i = 0; i < this.endCell.prevElements.length; i++) {
@@ -78,9 +77,9 @@ class Detour {
     }
 }
 
- setProperety(startElm, endElm) {
-    this.start = {style: this.parseIntProperetiObj(startElm)};
-    this.end = {style: endElm};
+ setProperaty(startElm, endElm) {
+    this.start = {style: this.parseIntProperatiObj(startElm)};
+    this.end = {style: this.parseIntProperatiObj(endElm)};
     this.end.style.width = this.L;
     this.end.style.height = this.L;
     this.psevdoContainerElm = {
@@ -122,7 +121,7 @@ condForDeletionElm(elm, obj) {
   var arrClass = document.getElementsByClassName(this.CLASS_NAME);
 
   var res = false;
-
+  var inElement = this.inElement;
   var n = 1;
   var num = this.num;
   var perimeterGrov = [...this.perimeterGrov];
@@ -262,7 +261,12 @@ setPosition(elm, x, y) {
       }
   }
 
-parseIntProperetiObj(obj) {
+parseIntProperatiObj(obj) {
+  function filtrObject(obj) {
+    let {left, top, width, height} = obj;
+    return {left, top, width, height};
+  }
+  obj = filtrObject(obj);
   for(let p in obj) {
     obj[p] = parseInt(obj[p]);
   }
@@ -290,16 +294,31 @@ addElement() {
   }
 }
 
+inElement(elm1, elm2) {
+  var style1 = elm1.style;
+  var style2 = elm2.style;
+  var {left: l1, top: t1, width: w1, height: h1} = style1;
+  var {left: l2, top: t2, width: w2, height: h2} = style2;
+  function diapasone(n1, m1, n2, m2) {
+    var injection1 = n1 >= n2 && n1 <= (n2+m2);
+    var injection2 = (n1+m1) >= n2 && (n1+m1) <= (n2+m2);
+    return injection1 && injection2;
+  }
+  var d1 = diapasone(l1, w1, l2, w2);
+  var d2 = diapasone(t1, h1, t2, h2);
+  return d1 && d2;
+}
+
 getContactObjects(objA, objB, crossroads) {
-  var widthA = parseInt(objA.style.width);
-  var heightA = parseInt(objA.style.height);
-  var leftA = parseInt(objA.style.left);
-  var topA = parseInt(objA.style.top);
+  var widthA = objA.style.width;
+  var heightA = objA.style.height;
+  var leftA = objA.style.left;
+  var topA = objA.style.top;
   
-  var widthB = parseInt(objB.style.width);
-  var heightB = parseInt(objB.style.height);
-  var leftB = parseInt(objB.style.left);
-  var topB = parseInt(objB.style.top);
+  var widthB = objB.style.width;
+  var heightB = objB.style.height;
+  var leftB = objB.style.left;
+  var topB = objB.style.top;
   
   var corners = [
     [leftB, topB],
@@ -363,11 +382,11 @@ wiewElement(elm, className) {
 window.onload = () => {
   var stElm = document.getElementById("block");
   positionElement.getRelativeParentElement(stElm);
-  var startCoord = filtrObject(stElm.style);
+  var startCoord = stElm.style;
   var containerElm = stElm.parentElement;
   var targElm = document.getElementById('target');
   positionElement.getRelativeParentElement(targElm);
-  var targCoord = filtrObject(targElm.style);
+  var targCoord = targElm.style;
   var arrObsElm = [...document.getElementsByClassName('obstacles')];
   var arrObsCoord = [];
   arrObsElm.forEach((elm, index) => {
@@ -375,12 +394,12 @@ window.onload = () => {
     arrObsCoord.push(elm.style);
   } );
   function filtrObject(obj) {
-    let {left, top} = obj;
-    return {left, top}
+    let {left, top, width, height} = obj;
+    return {left, top, width, height};
   }
+  var detour = new Detour(arrObsCoord, {width: 300, height: 300});
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
-    var detour = new Detour(arrObsCoord, {width: 300, height: 300});
     detour.L = 10;
     detour.limitIteration = 500000;
     var coordinates = detour.getCoordinates(startCoord, targCoord);
@@ -407,5 +426,9 @@ window.onload = () => {
       );*/
     //moveObj.start(100);
   }
+}
+
+function roundingNumbers(num, r) {
+  return num - (num % r);
 }
 
