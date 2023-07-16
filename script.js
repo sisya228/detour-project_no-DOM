@@ -62,15 +62,16 @@ class Detour {
    console.log('summ cell'+arrClass.length);
    console.log(`num iteration ${this.num}`);
    if (this.endCell){
+     console.log(this.endCell);
      this.endCell.prevElements.push(this.endCell);
      let res = [];
      for (var i = 0; i < this.endCell.prevElements.length; i++) {
        res.push(
-         [
-           this.endCell.prevElements[i].style.left,
-           this.endCell.prevElements[i].style.top
-           ]
-         )
+         {
+           left: this.endCell.prevElements[i].style.left,
+           top: this.endCell.prevElements[i].style.top
+          }
+       )
      }
      //return this.endCell.prevElements;
      return res;
@@ -78,10 +79,10 @@ class Detour {
 }
 
  setProperety(startElm, endElm) {
-    this.start = {style: startElm};
+    this.start = {style: this.parseIntProperetiObj(startElm)};
     this.end = {style: endElm};
-    this.end.style.width = this.L+'px';
-    this.end.style.height = this.L+'px';
+    this.end.style.width = this.L;
+    this.end.style.height = this.L;
     this.psevdoContainerElm = {
       style: this.positionContainer,
     };
@@ -186,8 +187,8 @@ styleNewElm(centerElm, arrNewElm) {
     arrNewElm[i].id = "cell" + this.ID;
     this.ID++;
     var L = this.L;
-    arrNewElm[i].style.width = L + "px";
-    arrNewElm[i].style.height = L + "px";
+    arrNewElm[i].style.width = L;
+    arrNewElm[i].style.height = L;
   }
   var leftCElm = parseInt(centerElm.style.left);
   var topCElm = parseInt(centerElm.style.top);
@@ -244,8 +245,8 @@ styleNewElm(centerElm, arrNewElm) {
 
 setPosition(elm, x, y) {
     if (this.centerElm) return;
-    elm.style.left = x + "px";
-    elm.style.top = y + "px";
+    elm.style.left = x;
+    elm.style.top = y;
     var resDel = this.condForDeletionElm(elm);
     if (resDel) {
       //elm.remove();
@@ -261,6 +262,13 @@ setPosition(elm, x, y) {
       }
   }
 
+parseIntProperetiObj(obj) {
+  for(let p in obj) {
+    obj[p] = parseInt(obj[p]);
+  }
+  return obj;
+}
+
 deleteElementsArrey(arr, condition, test) {
   var i = true;
   for (var i = 0; i < arr.length; i++) {
@@ -273,10 +281,10 @@ deleteElementsArrey(arr, condition, test) {
 addElement() {
   return {
     style: {
-      width: "0px",
-      height: "0px",
-      left: "0px",
-      top: "0px"
+      width: 0,
+      height: 0,
+      left: 0,
+      top: 0
     },
     removeStatus: false
   }
@@ -384,8 +392,8 @@ window.onload = () => {
         newElm.style.width = detour.L+'px';
         newElm.style.height = detour.L+'px';
         console.log(elm);
-        newElm.style.left = elm[0];
-        newElm.style.top = elm[1];
+        newElm.style.left = elm.left+'px';
+        newElm.style.top = elm.top+'px';
         newElm.style.background = 'red';
         newElm.style.zIndex = 3;
       }
