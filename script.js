@@ -23,10 +23,12 @@ class Detour {
     this.containerElm;
     this.psevdoContainerElm = {};
   }
+
   defaultValue() {
     this.num = 0;
     this.endCell = false;
   }
+
   getCoordinates(startCoordinates, targetCoordinates) {
     this.setProperaty(startCoordinates, targetCoordinates);
     this.start.prevElements = [];
@@ -56,14 +58,16 @@ class Detour {
       if (this.endCell || this.num > this.limitIteration) {
         if (this.num > this.limitIteration) {
           const err = new Error("limit iteration")
-          console.log(`${err.name}__${err.message}\n${err.stack}`);
+          console.log(`
+            ${err.stack}
+            numder itteration: ${this.num}, limit itteration: ${this.limitIteration}
+          `);
+          this.defaultValue();
         }
         break
       }
    }
-   var arrClass = document.getElementsByClassName(this.CLASS_NAME);
-   console.log('summ cell'+arrClass.length);
-   console.log(`num iteration ${this.num}`);
+
    if (this.endCell){
      this.endCell.prevElements.push(this.endCell);
      let res = [];
@@ -76,6 +80,9 @@ class Detour {
        )
      }
      //return this.endCell.prevElements;
+    // var arrClass = document.getElementsByClassName(this.CLASS_NAME);
+    // console.log('summ cell'+arrClass.length);
+     console.log(`num iteration ${this.num}`);
      this.defaultValue();
      return res;
     }
@@ -383,6 +390,7 @@ wiewElement(elm, className) {
 
 
 */
+
 window.onload = () => {
   var stElm = document.getElementById("block");
   positionElement.getRelativeParentElement(stElm);
@@ -390,6 +398,8 @@ window.onload = () => {
   var containerElm = stElm.parentElement;
   var targElm = document.getElementById('target');
   positionElement.getRelativeParentElement(targElm);
+  var moveElement = containerElm.addElement();
+  moveElement.className = 'move';
   var targCoord = targElm.style;
   var arrObsElm = [...document.getElementsByClassName('obstacles')];
   var arrObsCoord = [];
@@ -412,38 +422,46 @@ window.onload = () => {
     coordinates.forEach((elm, i) => {
       if(i != 0) {
         var newElm = containerElm.addElement();
-        newElm.style.position = 'absolute';
+        newElm.className = 'path';
+        newElm.innerHTML = i;
         newElm.style.width = detour.L+'px';
         newElm.style.height = detour.L+'px';
-        console.log(elm);
         newElm.style.left = elm.left+'px';
         newElm.style.top = elm.top+'px';
-        newElm.style.background = 'red';
-        newElm.style.zIndex = 3;
+        console.log(elm);
       }
       
     });
     var nextCoordinates = [];
-    coordinates.forEach((elmArr, i) => {
-      nextCoordinates.push(
-        [
-          elmArr.left+'px',
-          elmArr.top+'px',
-          '1px',
-          stElm
-          ]
-        );
+    coordinates.forEach((elmArr, i, arr) => {
+      if (i > 2) {
+        nextCoordinates.push(
+          [
+            arr[i-1].left+'px',
+            arr[i-1].top+'px',
+            elmArr.left+'px',
+            elmArr.top+'px',
+            '1px',
+            moveElement
+            ]
+          );
+      }
     });
     //nextCoordinates.forEach((elm) => {console.log(elm);});
-    var moveObj = new MoveFromAToB(
-      stElm.style.left, stElm.style.top,
-      nextCoordinates[2].left+'px',
-      nextCoordinates[2].top+'px',
-      '1px',
-      stElm
-      );
-    moveObj.start(100);
-console.log(coordinates[2].left + 'px', coordinates[2].top + 'px');
+    if (coordinates[0]) {
+      var moveObj = new MoveFromAToB(
+        stElm.style.left, stElm.style.top,
+        coordinates[2].left+'px',
+        coordinates[2].top+'px',
+        '1px',
+        moveElement
+        );
+      console.log(nextCoordinates[0][5]);
+      moveObj.nextCoordinates = nextCoordinates;
+      moveObj.start(50);
+    }
+    
+  // console.log(coordinates[2].left + 'px', coordinates[2].top + 'px');
   }
 }
 

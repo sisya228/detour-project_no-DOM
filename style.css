@@ -33,6 +33,15 @@
   position: absolute;
 }
 
+.move {
+  background: linear-gradient(10deg, #d37407, #20bebe);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  z-index: 5;
+  position: absolute;
+}
+
 .obstacles {
   width: 70px;
   height: 20px;
@@ -70,4 +79,13 @@
   background: red;
   position: absolute;
   z-index: 3;
+}
+
+.path {
+  background: linear-gradient(12deg, #dd0e87, #011420);
+  font-size: 10px;
+  color: burlywood;
+  border-radius: 20%;
+  z-index: 2;
+  position: absolute;
 }
