@@ -407,18 +407,23 @@ window.onload = () => {
     positionElement.getRelativeParentElement(elm);
     arrObsCoord.push(elm.style);
   } );
+  const L = 10;
   containerElm.onclick = (e) => {
-    setPositionElm(e, stElm, targElm);
+    setPositionElm(e, stElm, targElm, L);
     console.log('start left', startCoord.left);
     console.log('target left', targCoord.left);    
   } 
   var detour = new Detour(arrObsCoord, {width: 300, height: 300});
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
-    detour.L = 10;
+    detour.L = L;
     detour.limitIteration = 500000;
     var coordinates = detour.getCoordinates(startCoord, targCoord);
     coordinates = coordinates || [];
+    coordinates.push({
+      left: parseInt(targCoord.left),
+      top: parseInt(targCoord.top)
+    });
     coordinates.forEach((elm, i) => {
       if(i != 0) {
         var newElm = containerElm.addElement();
@@ -428,10 +433,15 @@ window.onload = () => {
         newElm.style.height = detour.L+'px';
         newElm.style.left = elm.left+'px';
         newElm.style.top = elm.top+'px';
-        console.log(elm);
+        console.log(i, elm);
       }
       
     });
+    setTimeout(() => {
+      [...document.getElementsByClassName('path')].forEach(element => {
+        element.remove();
+      });
+    }, 3000);
     var nextCoordinates = [];
     coordinates.forEach((elmArr, i, arr) => {
       if (i > 2) {
@@ -456,20 +466,19 @@ window.onload = () => {
         '1px',
         moveElement
         );
-      console.log(nextCoordinates[0][5]);
       moveObj.nextCoordinates = nextCoordinates;
-      moveObj.start(50);
+      moveObj.start(25);
     }
     
   // console.log(coordinates[2].left + 'px', coordinates[2].top + 'px');
   }
 }
 
-function setPositionElm(objEvn, elm1, elm2){
+function setPositionElm(objEvn, elm1, elm2, rn){
   elm2.style.left = elm1.style.left;
   elm2.style.top = elm1.style.top;
-  elm1.style.left = objEvn.layerX+'px';
-  elm1.style.top = objEvn.layerY+'px';
+  elm1.style.left = roundingNumbers(objEvn.layerX, rn)+'px';
+  elm1.style.top = roundingNumbers(objEvn.layerY, rn)+'px';
 }
 
 function roundingNumbers(num, r) {
