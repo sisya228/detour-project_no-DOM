@@ -546,6 +546,7 @@ function turnArrey(array, index) {
 // console.log(turnArrey(arrey, 4));
 // console.log(turnArrey(arrey, 5));
 
+
 for (let i = 0; i < array.length; i++) {
   console.log(turnArrey(array, i));  
 }
