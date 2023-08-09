@@ -22,6 +22,7 @@ class Detour {
     this.positionContainer = this.parseIntProperatiObj(containerCoordinates);
     this.containerElm;
     this.psevdoContainerElm = {};
+    this.console = true;
   }
 
   defaultValue() {
@@ -203,54 +204,95 @@ styleNewElm(centerElm, arrNewElm) {
   var leftCElm = parseInt(centerElm.style.left);
   var topCElm = parseInt(centerElm.style.top);
   var fnDelElm = this.condForDeletionElm;
-  var obj = this;
-  this.setPosition(
-    arrNewElm[0],
-    leftCElm - L,
-    topCElm - L
-  );
-  //if (this.centerElm) return;
-  this.setPosition(
-    arrNewElm[1],
-    leftCElm,
-    topCElm - L
-  );
-  //if (this.centerElm) return;
-  this.setPosition(
-    arrNewElm[2],
-    leftCElm + L,
-    topCElm - L
-  );
-  //if (this.centerElm) return;
-  this.setPosition(
-    arrNewElm[3],
-    leftCElm - L,
-    topCElm
-  );
-  //if (this.centerElm) return;
-  this.setPosition(
-    arrNewElm[4],
-    leftCElm + L,
-    topCElm,
-  );
-  //if (this.centerElm) return;
-  this.setPosition(
-    arrNewElm[5],
-    leftCElm - L,
-    topCElm + L
-  );
-  //if (this.centerElm) return;
-  this.setPosition(
-    arrNewElm[6],
-    leftCElm,
-    topCElm + L
-  );
-  //if (this.centerElm) return;
-  this.setPosition(
-    arrNewElm[7],
-    leftCElm + L,
-    topCElm + L
-  );
+  const arrPosition = [
+    [
+      arrNewElm[0],
+      leftCElm - L,
+      topCElm - L
+    ],
+    [
+      arrNewElm[1],
+      leftCElm,
+      topCElm - L
+    ],
+    [
+      arrNewElm[2],
+      leftCElm + L,
+      topCElm - L
+    ],
+    [
+      arrNewElm[3],
+      leftCElm - L,
+      topCElm
+    ],
+    [
+      arrNewElm[4],
+      leftCElm + L,
+      topCElm,
+    ],
+    [
+      arrNewElm[5],
+      leftCElm - L,
+      topCElm + L
+    ],
+    [
+      arrNewElm[6],
+      leftCElm,
+      topCElm + L
+    ],
+    [
+      arrNewElm[7],
+      leftCElm + L,
+      topCElm + L 
+    ],
+  ];
+  for (let i = 0; i < arrPosition.length; i++) {
+    this.setPosition(...arrPosition[i]);
+  }
+
+  // this.setPosition(...arrPosition[0]);
+  // //if (this.centerElm) return;
+  // this.setPosition(
+  //   arrNewElm[1],
+  //   leftCElm,
+  //   topCElm - L
+  // );
+  // //if (this.centerElm) return;
+  // this.setPosition(
+  //   arrNewElm[2],
+  //   leftCElm + L,
+  //   topCElm - L
+  // );
+  // //if (this.centerElm) return;
+  // this.setPosition(
+  //   arrNewElm[3],
+  //   leftCElm - L,
+  //   topCElm
+  // );
+  // //if (this.centerElm) return;
+  // this.setPosition(
+  //   arrNewElm[4],
+  //   leftCElm + L,
+  //   topCElm,
+  // );
+  // //if (this.centerElm) return;
+  // this.setPosition(
+  //   arrNewElm[5],
+  //   leftCElm - L,
+  //   topCElm + L
+  // );
+  // //if (this.centerElm) return;
+  // this.setPosition(
+  //   arrNewElm[6],
+  //   leftCElm,
+  //   topCElm + L
+  // );
+  // //if (this.centerElm) return;
+  // this.setPosition(
+  //   arrNewElm[7],
+  //   leftCElm + L,
+  //   topCElm + L
+  // );
 }
 
 setPosition(elm, x, y) {
@@ -417,13 +459,15 @@ window.onload = () => {
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
     detour.L = L;
-    detour.limitIteration = 500000;
+    detour.limitIteration = 700000;
     var coordinates = detour.getCoordinates(startCoord, targCoord);
     coordinates = coordinates || [];
-    coordinates.push({
-      left: parseInt(targCoord.left),
-      top: parseInt(targCoord.top)
-    });
+    if (coordinates.length) {
+      coordinates.push({
+        left: parseInt(targCoord.left),
+        top: parseInt(targCoord.top)
+      });
+    }
     coordinates.forEach((elm, i) => {
       if(i != 0) {
         var newElm = containerElm.addElement();
@@ -475,13 +519,34 @@ window.onload = () => {
 }
 
 function setPositionElm(objEvn, elm1, elm2, rn){
-  elm2.style.left = elm1.style.left;
-  elm2.style.top = elm1.style.top;
-  elm1.style.left = roundingNumbers(objEvn.layerX, rn)+'px';
-  elm1.style.top = roundingNumbers(objEvn.layerY, rn)+'px';
+  elm1.style.left = elm2.style.left;
+  elm1.style.top = elm2.style.top;
+  elm2.style.left = roundingNumbers(objEvn.layerX, rn)+'px';
+  elm2.style.top = roundingNumbers(objEvn.layerY, rn)+'px';
 }
 
 function roundingNumbers(num, r) {
   return num - (num % r);
 }
 
+
+
+const array = [0, 1, 2, 3, 4, 5, 6, 7];
+console.log(array);
+
+function turnArrey(array, index) {
+  let cloneArr = [...array]; 
+  let res = cloneArr.splice(0, index);
+  return cloneArr.concat(res);
+}
+
+// console.log(turnArrey(arrey, 1));
+// console.log(turnArrey(arrey, 2));
+// console.log(turnArrey(arrey, 3));
+// console.log(turnArrey(arrey, 4));
+// console.log(turnArrey(arrey, 5));
+
+for (let i = 0; i < array.length; i++) {
+  console.log(turnArrey(array, i));  
+}
+console.log(turnArrey(array, 0));
