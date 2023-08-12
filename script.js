@@ -206,48 +206,43 @@ styleNewElm(centerElm, arrNewElm) {
   var fnDelElm = this.condForDeletionElm;
   const arrPosition = [
     [
-      arrNewElm[0],
       leftCElm - L,
       topCElm - L
     ],
     [
-      arrNewElm[1],
       leftCElm,
       topCElm - L
     ],
     [
-      arrNewElm[2],
       leftCElm + L,
       topCElm - L
     ],
     [
-      arrNewElm[3],
       leftCElm - L,
       topCElm
     ],
     [
-      arrNewElm[4],
       leftCElm + L,
       topCElm,
     ],
     [
-      arrNewElm[5],
       leftCElm - L,
       topCElm + L
     ],
     [
-      arrNewElm[6],
       leftCElm,
       topCElm + L
     ],
     [
-      arrNewElm[7],
       leftCElm + L,
       topCElm + L 
     ],
   ];
   for (let i = 0; i < arrPosition.length; i++) {
-    this.setPosition(...arrPosition[i]);
+    this.setPosition(
+      arrNewElm[i],
+      ...arrPosition[i]
+      );
   }
 
   // this.setPosition(...arrPosition[0]);
