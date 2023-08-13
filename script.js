@@ -238,11 +238,27 @@ styleNewElm(centerElm, arrNewElm) {
       topCElm + L 
     ],
   ];
+  // var arrPositionTurn = turnArrey(arrPosition, 1);
+  if (this.console) {
+    // console.log(arrPosition);
+    // console.log(arrPositionTurn);
+    // const elm = document.getElementById('container').addElement();
+    // elm.className = 'test';
+    // elm.style.left = arrPositionTurn[0][0]+'px';
+    // elm.style.top = arrPositionTurn[0][1]+'px';
+    // console.log(elm);
+  }
+  this.console = false;
   for (let i = 0; i < arrPosition.length; i++) {
     this.setPosition(
       arrNewElm[i],
       ...arrPosition[i]
       );
+  }
+  function turnArrey(array, index) {
+    let cloneArr = [...array]; 
+    let res = cloneArr.splice(0, index);
+    return cloneArr.concat(res);
   }
 
   // this.setPosition(...arrPosition[0]);
@@ -446,15 +462,25 @@ window.onload = () => {
   } );
   const L = 10;
   containerElm.onclick = (e) => {
-    setPositionElm(e, stElm, targElm, L);
+    if (!obstacles.active) {
+      setPositionElm(e, stElm, targElm, L);
+    } else {
+      obstacles.add(e);
+    }
     console.log('start left', startCoord.left);
     console.log('target left', targCoord.left);    
   } 
+  obstacles.addElement = document.getElementById('add-obstencles');
+  obstacles.addElement.onclick = () => {
+    obstacles.clickAddObstacles();
+  };
+  obstacles.containerElm = containerElm;
+  obstacles.textareaElement = document.getElementById('script-code');
   var detour = new Detour(arrObsCoord, {width: 300, height: 300});
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
     detour.L = L;
-    detour.limitIteration = 700000;
+    detour.limitIteration = 3000000;
     var coordinates = detour.getCoordinates(startCoord, targCoord);
     coordinates = coordinates || [];
     if (coordinates.length) {
@@ -472,7 +498,7 @@ window.onload = () => {
         newElm.style.height = detour.L+'px';
         newElm.style.left = elm.left+'px';
         newElm.style.top = elm.top+'px';
-        console.log(i, elm);
+        // console.log(i, elm);
       }
       
     });
@@ -524,10 +550,71 @@ function roundingNumbers(num, r) {
   return num - (num % r);
 }
 
+const obstacles = {
+  coordinatesA: {x: 0, y: 0, set: false},
+  coordinatesB: {x: 0, y: 0, set: false},
+  style: {left: 0, top: 0, width: 0, height: 0},
+  containerElm: null,
+  addElement: null,
+  textareaElement: null,
+  active: false,
+  add(objEvn) {
+    const dot = this.containerElm.addElement();
+    dot.className = 'dot';
+    if (!this.coordinatesA.set) {
+      Object.assign(this.coordinatesA, {x: objEvn.layerX, y: objEvn.layerY});
+      Object.assign(dot.style, {left: this.coordinatesA.x+'px', top: this.coordinatesA.y+'px'});
+      this.coordinatesA.set = true;
+    } else if(!this.coordinatesB.set){
+      Object.assign(this.coordinatesB, {x: objEvn.layerX, y: objEvn.layerY});
+      this.coordinatesB.set = true;
+      const coordinates = this.getCoordinatesObstancles(this.coordinatesA, this.coordinatesB);
+      this.setValueTextarea(coordinates);
+      this.setContours(coordinates, this.containerElm);
+      dot.remove();
+      this.default();
+    }
+  },
+  getCoordinatesObstancles(objA, objB) {
+    const res = Object.assign(this.style, {
+      left: objA.x+'px',
+      top: objA.y+'px',
+      width: (objB.x - objA.x) + 'px',
+      height: (objB.y - objA.y) + 'px'
+    });
+    return res;
+  },
+  setValueTextarea(coordinatesObstancles) {
+    this.textareaElement.value += JSON.stringify(coordinatesObstancles);
+  },
+  setContours(coordinatesObstancles) {
+    const newElm = this.containerElm.addElement();
+    newElm.className = 'contours';
+    Object.assign(newElm.style, coordinatesObstancles);
+    console.log(newElm);
+  },
+  clickAddObstacles() {
+    console.log('click');
+    obstacles.active = !obstacles.active;
+    if (obstacles.active) {
+      obstacles.addElement.style.background = '#f90';
+      obstacles.textareaElement.style.display = 'block';
+    } else {
+      obstacles.addElement.style.background = '#00f';
+      obstacles.textareaElement.style.display = 'none';
+    }
+  },
+  default() {
+    this.coordinatesA = {x: 0, y: 0, set: false};
+    this.coordinatesB = {x: 0, y: 0, set: false};
+  }
+};
+
+
 
 
 const array = [0, 1, 2, 3, 4, 5, 6, 7];
-console.log(array);
+// console.log(array);
 
 function turnArrey(array, index) {
   let cloneArr = [...array]; 
@@ -543,6 +630,6 @@ function turnArrey(array, index) {
 
 
 for (let i = 0; i < array.length; i++) {
-  console.log(turnArrey(array, i));  
+  // console.log(turnArrey(array, i));  
 }
-console.log(turnArrey(array, 0));
+// console.log(turnArrey(array, 0));
