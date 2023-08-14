@@ -100,9 +100,20 @@
   position: absolute;
   width: 3px;
   height: 3px;
+  z-index: 5;
 }
 
 .contours {
   background-color: #d37407;
   position: absolute;
+}
+
+.ok {
+  background-color: green;
+  border-radius: 10%;
+}
+
+.cancel {
+  background-color: red;
+  border-radius: 10%;
 }

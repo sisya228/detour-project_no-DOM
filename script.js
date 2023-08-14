@@ -467,8 +467,7 @@ window.onload = () => {
     } else {
       obstacles.add(e);
     }
-    console.log('start left', startCoord.left);
-    console.log('target left', targCoord.left);    
+   
   } 
   obstacles.addElement = document.getElementById('add-obstencles');
   obstacles.addElement.onclick = () => {
@@ -557,22 +556,29 @@ const obstacles = {
   containerElm: null,
   addElement: null,
   textareaElement: null,
+  valueTextarea: '',
+  dot: null,
   active: false,
+  clickOnObstacles: false,
   add(objEvn) {
-    const dot = this.containerElm.addElement();
-    dot.className = 'dot';
-    if (!this.coordinatesA.set) {
-      Object.assign(this.coordinatesA, {x: objEvn.layerX, y: objEvn.layerY});
-      Object.assign(dot.style, {left: this.coordinatesA.x+'px', top: this.coordinatesA.y+'px'});
-      this.coordinatesA.set = true;
-    } else if(!this.coordinatesB.set){
-      Object.assign(this.coordinatesB, {x: objEvn.layerX, y: objEvn.layerY});
-      this.coordinatesB.set = true;
-      const coordinates = this.getCoordinatesObstancles(this.coordinatesA, this.coordinatesB);
-      this.setValueTextarea(coordinates);
-      this.setContours(coordinates, this.containerElm);
-      dot.remove();
-      this.default();
+    if (!this.clickOnObstacles) {
+      if (!this.coordinatesA.set) {
+        this.dot = this.containerElm.addElement();
+        this.dot.className = 'dot';
+        Object.assign(this.coordinatesA, {x: objEvn.layerX, y: objEvn.layerY});
+        Object.assign(this.dot.style, {left: this.coordinatesA.x+'px', top: this.coordinatesA.y+'px'});
+        this.coordinatesA.set = true;
+      } else if(!this.coordinatesB.set){
+        Object.assign(this.coordinatesB, {x: objEvn.layerX, y: objEvn.layerY});
+        this.coordinatesB.set = true;
+        const coordinates = this.getCoordinatesObstancles(this.coordinatesA, this.coordinatesB);
+        //this.setValueTextarea(coordinates);
+        this.setContours(coordinates, this.containerElm);
+        this.dot.remove();
+        this.default();
+      }
+    } else {
+      this.clickOnObstacles = false;
     }
   },
   getCoordinatesObstancles(objA, objB) {
@@ -585,16 +591,32 @@ const obstacles = {
     return res;
   },
   setValueTextarea(coordinatesObstancles) {
-    this.textareaElement.value += JSON.stringify(coordinatesObstancles);
+    this.valueTextarea += ' '+JSON.stringify(coordinatesObstancles)+',\n';
+    this.textareaElement.value = `[\n${this.valueTextarea}]`;
   },
   setContours(coordinatesObstancles) {
     const newElm = this.containerElm.addElement();
     newElm.className = 'contours';
     Object.assign(newElm.style, coordinatesObstancles);
-    console.log(newElm);
+    newElm.onclick = () => {this.clickOnObstacles = true};
+    const ok = newElm.addElement('button');
+    ok.className = 'ok';
+    ok.innerHTML = 'ok';
+    ok.onclick = (objEvn) => {
+      this.clickOnObstacles = true;
+      const coord = {...coordinatesObstancles};
+      const {left, top, width, height} = objEvn.currentTarget.parentElement.style;
+      this.setValueTextarea({left, top, width, height});
+    };
+    const cancel = newElm.addElement('button');
+    cancel.innerHTML = 'cancel';
+    cancel.className = 'cancel';
+    cancel.onclick = () => {
+      this.clickOnObstacles = true;
+      newElm.remove();
+    };
   },
   clickAddObstacles() {
-    console.log('click');
     obstacles.active = !obstacles.active;
     if (obstacles.active) {
       obstacles.addElement.style.background = '#f90';
@@ -622,14 +644,9 @@ function turnArrey(array, index) {
   return cloneArr.concat(res);
 }
 
-// console.log(turnArrey(arrey, 1));
-// console.log(turnArrey(arrey, 2));
-// console.log(turnArrey(arrey, 3));
-// console.log(turnArrey(arrey, 4));
-// console.log(turnArrey(arrey, 5));
+const arrObj = [
+  {"left":"143px","top":"24px","width":"30px","height":"71px"},
+  {"left":"224px","top":"112px","width":"25px","height":"81px"},
+  {"left":"180px","top":"212px","width":"19px","height":"46px"},
+];
 
-
-for (let i = 0; i < array.length; i++) {
-  // console.log(turnArrey(array, i));  
-}
-// console.log(turnArrey(array, 0));
