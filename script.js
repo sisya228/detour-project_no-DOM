@@ -454,6 +454,7 @@ window.onload = () => {
   var moveElement = containerElm.addElement();
   moveElement.className = 'move';
   var targCoord = targElm.style;
+  addObstacles(containerElm, 'obstacles');
   var arrObsElm = [...document.getElementsByClassName('obstacles')];
   var arrObsCoord = [];
   arrObsElm.forEach((elm, index) => {
@@ -461,20 +462,15 @@ window.onload = () => {
     arrObsCoord.push(elm.style);
   } );
   const L = 10;
+  const obstacles = new Obstacles(containerElm, document.getElementById('add-obstencles'), document.getElementById("script-code"));
   containerElm.onclick = (e) => {
     if (!obstacles.active) {
       setPositionElm(e, stElm, targElm, L);
     } else {
-      obstacles.add(e);
+      obstacles.add(e, L);
     }
    
   } 
-  obstacles.addElement = document.getElementById('add-obstencles');
-  obstacles.addElement.onclick = () => {
-    obstacles.clickAddObstacles();
-  };
-  obstacles.containerElm = containerElm;
-  obstacles.textareaElement = document.getElementById('script-code');
   var detour = new Detour(arrObsCoord, {width: 300, height: 300});
   var myClass = document.getElementById('detour');
   myClass.onclick = () => {
@@ -549,88 +545,189 @@ function roundingNumbers(num, r) {
   return num - (num % r);
 }
 
-const obstacles = {
-  coordinatesA: {x: 0, y: 0, set: false},
-  coordinatesB: {x: 0, y: 0, set: false},
-  style: {left: 0, top: 0, width: 0, height: 0},
-  containerElm: null,
-  addElement: null,
-  textareaElement: null,
-  valueTextarea: '',
-  dot: null,
-  active: false,
-  clickOnObstacles: false,
-  add(objEvn) {
-    if (!this.clickOnObstacles) {
-      if (!this.coordinatesA.set) {
-        this.dot = this.containerElm.addElement();
-        this.dot.className = 'dot';
-        Object.assign(this.coordinatesA, {x: objEvn.layerX, y: objEvn.layerY});
-        Object.assign(this.dot.style, {left: this.coordinatesA.x+'px', top: this.coordinatesA.y+'px'});
-        this.coordinatesA.set = true;
-      } else if(!this.coordinatesB.set){
-        Object.assign(this.coordinatesB, {x: objEvn.layerX, y: objEvn.layerY});
-        this.coordinatesB.set = true;
-        const coordinates = this.getCoordinatesObstancles(this.coordinatesA, this.coordinatesB);
-        //this.setValueTextarea(coordinates);
-        this.setContours(coordinates, this.containerElm);
-        this.dot.remove();
-        this.default();
-      }
-    } else {
+class Obstacles {
+    constructor(parentElement, buttonAddObstamcles, textareaElement) {
+      this.coordinatesA = {x: 0, y: 0, set: false};
+      this.coordinatesB = {x: 0, y: 0, set: false};
+      this.style = {left: 0, top: 0, width: 0, height: 0};
+      this.containerElm = parentElement;
+      this.buttonAddObstamcles =  buttonAddObstamcles;
+      this.setClickAddObstacles();
+      this.textareaElement = textareaElement;
+      this.valueTextarea = '';
+      this.dot = null;
+      this.active = false;
       this.clickOnObstacles = false;
     }
-  },
-  getCoordinatesObstancles(objA, objB) {
-    const res = Object.assign(this.style, {
-      left: objA.x+'px',
-      top: objA.y+'px',
-      width: (objB.x - objA.x) + 'px',
-      height: (objB.y - objA.y) + 'px'
-    });
-    return res;
-  },
-  setValueTextarea(coordinatesObstancles) {
-    this.valueTextarea += ' '+JSON.stringify(coordinatesObstancles)+',\n';
-    this.textareaElement.value = `[\n${this.valueTextarea}]`;
-  },
-  setContours(coordinatesObstancles) {
-    const newElm = this.containerElm.addElement();
-    newElm.className = 'contours';
-    Object.assign(newElm.style, coordinatesObstancles);
-    newElm.onclick = () => {this.clickOnObstacles = true};
-    const ok = newElm.addElement('button');
-    ok.className = 'ok';
-    ok.innerHTML = 'ok';
-    ok.onclick = (objEvn) => {
-      this.clickOnObstacles = true;
-      const coord = {...coordinatesObstancles};
-      const {left, top, width, height} = objEvn.currentTarget.parentElement.style;
-      this.setValueTextarea({left, top, width, height});
-    };
-    const cancel = newElm.addElement('button');
-    cancel.innerHTML = 'cancel';
-    cancel.className = 'cancel';
-    cancel.onclick = () => {
-      this.clickOnObstacles = true;
-      newElm.remove();
-    };
-  },
-  clickAddObstacles() {
-    obstacles.active = !obstacles.active;
-    if (obstacles.active) {
-      obstacles.addElement.style.background = '#f90';
-      obstacles.textareaElement.style.display = 'block';
-    } else {
-      obstacles.addElement.style.background = '#00f';
-      obstacles.textareaElement.style.display = 'none';
+
+    add(objEvn, rounding) {
+      if (!this.clickOnObstacles) {
+        if (!this.coordinatesA.set) {
+          this.dot = this.containerElm.addElement();
+          this.dot.className = 'dot';
+          Object.assign(this.coordinatesA, {x: this.roundingNumbers(objEvn.layerX, rounding), y: this.roundingNumbers(objEvn.layerY, rounding)});
+          Object.assign(this.dot.style, {left: this.coordinatesA.x+'px', top: this.coordinatesA.y+'px'});
+          this.coordinatesA.set = true;
+        } else if(!this.coordinatesB.set){
+          Object.assign(this.coordinatesB, {x: roundingNumbers(objEvn.layerX, rounding), y: roundingNumbers(objEvn.layerY, rounding)});
+          this.coordinatesB.set = true;
+          const coordinates = this.getCoordinatesObstancles(this.coordinatesA, this.coordinatesB);
+          //this.setValueTextarea(coordinates);
+          this.setContours(coordinates, this.containerElm);
+          this.dot.remove();
+          this.default();
+        }
+      } else {
+        this.clickOnObstacles = false;
+      }
     }
-  },
-  default() {
-    this.coordinatesA = {x: 0, y: 0, set: false};
-    this.coordinatesB = {x: 0, y: 0, set: false};
-  }
-};
+
+    getCoordinatesObstancles(objA, objB) {
+      const res = Object.assign(this.style, {
+        left: objA.x+'px',
+        top: objA.y+'px',
+        width: (objB.x - objA.x) + 'px',
+        height: (objB.y - objA.y) + 'px'
+      });
+      return res;
+    }
+
+    setValueTextarea(coordinatesObstancles) {
+      this.valueTextarea += ' '+JSON.stringify(coordinatesObstancles)+',\n';
+      this.textareaElement.value = `[\n${this.valueTextarea}]`;
+    }
+
+    setContours(coordinatesObstancles) {
+      const newElm = this.containerElm.addElement();
+      newElm.className = 'contours';
+      Object.assign(newElm.style, coordinatesObstancles);
+      newElm.onclick = () => {this.clickOnObstacles = true};
+      const ok = newElm.addElement('button');
+      ok.className = 'ok';
+      ok.innerHTML = 'ok';
+      ok.onclick = (objEvn) => {
+        this.clickOnObstacles = true;
+        const coord = {...coordinatesObstancles};
+        const {left, top, width, height} = objEvn.currentTarget.parentElement.style;
+        this.setValueTextarea({left, top, width, height});
+      };
+      const cancel = newElm.addElement('button');
+      cancel.innerHTML = 'cancel';
+      cancel.className = 'cancel';
+      cancel.onclick = () => {
+        this.clickOnObstacles = true;
+        newElm.remove();
+      };
+    }
+
+    setClickAddObstacles() {
+      this.buttonAddObstamcles.onclick = () => {
+        this.active = !this.active;
+        if (this.active) {
+          this.buttonAddObstamcles.style.background = '#f90';
+          this.textareaElement.style.display = 'block';
+        } else {
+          this.buttonAddObstamcles.style.background = '#00f';
+          this.textareaElement.style.display = 'none';
+        }
+      };
+    }
+
+    roundingNumbers(num, r) {
+      return num - (num % r);
+    }
+
+    default() {
+      this.coordinatesA = {x: 0, y: 0, set: false};
+      this.coordinatesB = {x: 0, y: 0, set: false};
+    }
+}
+
+// const obstacles = {
+//   coordinatesA: {x: 0, y: 0, set: false},
+//   coordinatesB: {x: 0, y: 0, set: false},
+//   style: {left: 0, top: 0, width: 0, height: 0},
+//   containerElm: null,
+//   addElement: null,
+//   textareaElement: null,
+//   valueTextarea: '',
+//   dot: null,
+//   active: false,
+//   clickOnObstacles: false,
+//   add(objEvn, rounding) {
+//     if (!this.clickOnObstacles) {
+//       if (!this.coordinatesA.set) {
+//         this.dot = this.containerElm.addElement();
+//         this.dot.className = 'dot';
+//         Object.assign(this.coordinatesA, {x: this.roundingNumbers(objEvn.layerX, rounding), y: this.roundingNumbers(objEvn.layerY, rounding)});
+//         Object.assign(this.dot.style, {left: this.coordinatesA.x+'px', top: this.coordinatesA.y+'px'});
+//         this.coordinatesA.set = true;
+//       } else if(!this.coordinatesB.set){
+//         Object.assign(this.coordinatesB, {x: roundingNumbers(objEvn.layerX, rounding), y: roundingNumbers(objEvn.layerY, rounding)});
+//         this.coordinatesB.set = true;
+//         const coordinates = this.getCoordinatesObstancles(this.coordinatesA, this.coordinatesB);
+//         //this.setValueTextarea(coordinates);
+//         this.setContours(coordinates, this.containerElm);
+//         this.dot.remove();
+//         this.default();
+//       }
+//     } else {
+//       this.clickOnObstacles = false;
+//     }
+//   },
+//   getCoordinatesObstancles(objA, objB) {
+//     const res = Object.assign(this.style, {
+//       left: objA.x+'px',
+//       top: objA.y+'px',
+//       width: (objB.x - objA.x) + 'px',
+//       height: (objB.y - objA.y) + 'px'
+//     });
+//     return res;
+//   },
+//   setValueTextarea(coordinatesObstancles) {
+//     this.valueTextarea += ' '+JSON.stringify(coordinatesObstancles)+',\n';
+//     this.textareaElement.value = `[\n${this.valueTextarea}]`;
+//   },
+//   setContours(coordinatesObstancles) {
+//     const newElm = this.containerElm.addElement();
+//     newElm.className = 'contours';
+//     Object.assign(newElm.style, coordinatesObstancles);
+//     newElm.onclick = () => {this.clickOnObstacles = true};
+//     const ok = newElm.addElement('button');
+//     ok.className = 'ok';
+//     ok.innerHTML = 'ok';
+//     ok.onclick = (objEvn) => {
+//       this.clickOnObstacles = true;
+//       const coord = {...coordinatesObstancles};
+//       const {left, top, width, height} = objEvn.currentTarget.parentElement.style;
+//       this.setValueTextarea({left, top, width, height});
+//     };
+//     const cancel = newElm.addElement('button');
+//     cancel.innerHTML = 'cancel';
+//     cancel.className = 'cancel';
+//     cancel.onclick = () => {
+//       this.clickOnObstacles = true;
+//       newElm.remove();
+//     };
+//   },
+//   clickAddObstacles() {
+//     this.active = !this.active;
+//     if (this.active) {
+//       this.addElement.style.background = '#f90';
+//       this.textareaElement.style.display = 'block';
+//     } else {
+//       this.addElement.style.background = '#00f';
+//       this.textareaElement.style.display = 'none';
+//     }
+//   },
+//   roundingNumbers(num, r) {
+//     return num - (num % r);
+//   },
+//   default() {
+//     this.coordinatesA = {x: 0, y: 0, set: false};
+//     this.coordinatesB = {x: 0, y: 0, set: false};
+//   }
+// };
 
 
 
@@ -645,8 +742,16 @@ function turnArrey(array, index) {
 }
 
 const arrObj = [
-  {"left":"143px","top":"24px","width":"30px","height":"71px"},
-  {"left":"224px","top":"112px","width":"25px","height":"81px"},
-  {"left":"180px","top":"212px","width":"19px","height":"46px"},
-];
+  {"left":"150px","top":"230px","width":"30px","height":"30px"},
+  {"left":"200px","top":"60px","width":"20px","height":"80px"},
+  {"left":"240px","top":"130px","width":"30px","height":"60px"},
+]
+function addObstacles(parentElement, className) {
+  arrObj;
+  arrObj.forEach((elmArr) => {
+    const newObstancles = parentElement.addElement();
+    newObstancles.className = className;
+    Object.assign(newObstancles.style, elmArr);
+  });
+}
 
