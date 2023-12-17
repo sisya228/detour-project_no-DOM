@@ -545,6 +545,7 @@ function roundingNumbers(num, r) {
   return num - (num % r);
 }
 
+
 class Obstacles {
     constructor(parentElement, buttonAddObstamcles, textareaElement) {
       this.coordinatesA = {x: 0, y: 0, set: false};
@@ -558,13 +559,38 @@ class Obstacles {
       this.dot = null;
       this.active = false;
       this.clickOnObstacles = false;
+      this.styles = {
+        contours: {
+          background: '#d37407',
+          position: 'absolute',
+        },
+        ok: {
+          background: 'green',
+          borderRadius: '10%'
+        },
+        cancel: {
+          background: `red`,
+          borderRadius: `30 %`,
+          color: '#0000ff',
+        },
+        dot: {
+          backgroundColor: '#ac4509',
+          position: 'absolute',
+          width: '3px',
+          height: '3px',
+          zIndex: '5',
+          borderRadius: `50%`,
+        }
+
+      };
     }
 
     add(objEvn, rounding) {
       if (!this.clickOnObstacles) {
         if (!this.coordinatesA.set) {
           this.dot = this.containerElm.addElement();
-          this.dot.className = 'dot';
+          //this.dot.className = 'dot';
+          Object.assign(this.dot.style, this.styles.dot);
           Object.assign(this.coordinatesA, {x: this.roundingNumbers(objEvn.layerX, rounding), y: this.roundingNumbers(objEvn.layerY, rounding)});
           Object.assign(this.dot.style, {left: this.coordinatesA.x+'px', top: this.coordinatesA.y+'px'});
           this.coordinatesA.set = true;
@@ -593,17 +619,29 @@ class Obstacles {
     }
 
     setValueTextarea(coordinatesObstancles) {
-      this.valueTextarea += ' '+JSON.stringify(coordinatesObstancles)+',\n';
-      this.textareaElement.value = `[\n${this.valueTextarea}]`;
+      this.valueTextarea += '         '+JSON.stringify(coordinatesObstancles)+',\n';
+      const res = `
+      const arrObj = [\n${this.valueTextarea}     ];
+      function addObstacles(parentElement, className) {
+        arrObj.forEach((elmArr) => {
+          const newObstancles = parentElement.addElement();
+          newObstancles.className = className;
+          Object.assign(newObstancles.style, elmArr);
+        });
+      }
+      `;
+      this.textareaElement.value = res;
     }
 
     setContours(coordinatesObstancles) {
       const newElm = this.containerElm.addElement();
-      newElm.className = 'contours';
+      // newElm.className = 'contours';
+      Object.assign(newElm.style, this.styles.contours);
       Object.assign(newElm.style, coordinatesObstancles);
       newElm.onclick = () => {this.clickOnObstacles = true};
       const ok = newElm.addElement('button');
-      ok.className = 'ok';
+      // ok.className = 'ok';
+      Object.assign(ok.style, this.styles.ok);
       ok.innerHTML = 'ok';
       ok.onclick = (objEvn) => {
         this.clickOnObstacles = true;
@@ -613,7 +651,8 @@ class Obstacles {
       };
       const cancel = newElm.addElement('button');
       cancel.innerHTML = 'cancel';
-      cancel.className = 'cancel';
+      //cancel.className = 'cancel';
+      Object.assign(cancel.style, this.styles.cancel);
       cancel.onclick = () => {
         this.clickOnObstacles = true;
         newElm.remove();
@@ -642,6 +681,9 @@ class Obstacles {
       this.coordinatesB = {x: 0, y: 0, set: false};
     }
 }
+
+
+ 
 
 // const obstacles = {
 //   coordinatesA: {x: 0, y: 0, set: false},
